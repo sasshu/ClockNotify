@@ -1,0 +1,53 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.clock {
+  font-size: 150px;
+  font-family: "Roboto", serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-style: normal;
+  font-variation-settings: "wdth" 100;
+}
+
+.audio-button {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  /* clip-path: circle(50%); */
+  background-color: #758492;
+  opacity: 0.3;
+  border: none;
+}
+
+.audio-button:hover {
+  opacity: 1;
+  transition: 0.5s;
+}
+
+.play-icon {
+  position: absolute;
+  content: "";
+  top: 25%;
+  left: calc(100% / 3);
+  width: calc((50% / 2) * tan(60deg));
+  height: 50%;
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+  background-color: #b1b8c2;
+}
+
+.pause-icon {
+  position: absolute;
+  content: "";
+  top: 30%;
+  left: 30%;
+  width: 40%;
+  height: 40%;
+  clip-path: polygon(0 0, 0 100%, 100% 100%, 100% 0);
+  background-color: #b1b8c2;
+}
