@@ -6,7 +6,8 @@
   "homepage": "https://sasshu.github.io/ClockNotify",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && cp -r dist docs",
+    "rebuild": "vite build && rm -R docs && cp -r dist docs",
     "lint": "eslint .",
     "preview": "vite preview",
     "predeploy": "npm run build",
