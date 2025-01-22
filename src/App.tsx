@@ -42,8 +42,8 @@ function App() {
 
   const initializeClock = () => {
     setIsLoading(true);
-    setTimeout(() => {
-      const newId = setInterval(() => {
+    window.setTimeout(() => {
+      const newId = window.setInterval(() => {
         const currentClock = getCurrentClock();
         setClock(currentClock);
         if (currentClock.minute == 19 && currentClock.second == 0) {
