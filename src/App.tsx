@@ -46,7 +46,7 @@ function App() {
       const newId = window.setInterval(() => {
         const currentClock = getCurrentClock();
         setClock(currentClock);
-        if (currentClock.minute == 19 && currentClock.second == 0) {
+        if (currentClock.minute == 0 && currentClock.second == 0) {
           new Notification("ClockNotify", {
             body: `${currentClock.hour}時になりました。`,
             icon: logo,
@@ -82,7 +82,6 @@ function App() {
           ※通知を受け取るには、サイトの設定から通知をオンにする必要があります。
         </p>
       )}
-
       <h1 className="clock">{clock.time}</h1>
 
       {/* <button onClick={playCuckoo}>音を鳴らす</button> */}
