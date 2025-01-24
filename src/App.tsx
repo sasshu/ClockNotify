@@ -68,7 +68,7 @@ function App() {
     if ("serviceWorker" in navigator) {
       // ServiceWorkerの登録
       navigator.serviceWorker
-        .register("../sw.ts")
+        .register("/sw.ts")
         .then((registration) => {
           setRegistration(registration);
         })
