@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import cuckooMp3 from "./assets/cuckoo.mp3";
 import "./App.css";
+// import CustomServiceWorker from "./sw.ts";
 
 // ex) 17:52 55
 const getCurrentClock = () => {
@@ -67,10 +68,9 @@ function App() {
     if ("serviceWorker" in navigator) {
       // ServiceWorkerの登録
       navigator.serviceWorker
-        .register("/sw.ts")
+        .register("../sw.ts")
         .then((registration) => {
           setRegistration(registration);
-          // handlePlayClick(registration);
         })
         .catch(() => {
           console.error("ServiceWorker registration failed");
@@ -85,8 +85,9 @@ function App() {
       };
 
       // アプリのアンロード時にService Workerの時計を停止
-      onbeforeunload = () => {
+      onbeforeunload = async () => {
         navigator.serviceWorker.controller?.postMessage("stop");
+        // await (registration as ServiceWorkerRegistration).unregister();
       };
     }
   }, []);
