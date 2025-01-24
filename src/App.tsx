@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from "react";
-import logo from "/logo.png";
 import cuckooMp3 from "./assets/cuckoo.mp3";
 import "./App.css";
 
@@ -25,39 +24,35 @@ function App() {
   );
   const [intervalId, setIntervalId] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [registration, setRegistration] = useState({});
   const audioRef = useRef(new Audio());
+  const channel = new BroadcastChannel("sound-connection");
 
-  // const playCuckoo = () => {
-  //   audioRef.current?.play();
-  // };
-
+  // 時計を進める
   const handlePlayClick = () => {
     initializeClock();
+    (registration as ServiceWorkerRegistration).active?.postMessage("play");
   };
 
+  // 時計を止める
   const handlePauseClick = () => {
     clearInterval(intervalId);
     setIntervalId(0);
+    (registration as ServiceWorkerRegistration).active?.postMessage("pause");
   };
 
+  // 時計を初期化
   const initializeClock = () => {
     setIsLoading(true);
+
     window.setTimeout(() => {
       const newId = window.setInterval(() => {
-        const currentClock = getCurrentClock();
-        setClock(currentClock);
-        if (currentClock.minute == 0 && currentClock.second == 0) {
-          new Notification("ClockNotify", {
-            body: `${currentClock.hour}時になりました。`,
-            icon: logo,
-            tag: "hourlyNotification",
-          });
-          audioRef.current?.play();
-        }
+        setClock(getCurrentClock());
       }, 1000);
       setIntervalId(newId);
-      setIsLoading(false);
     }, 1000 - new Date().getUTCMilliseconds());
+
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -67,6 +62,32 @@ function App() {
       Notification.requestPermission().then((permission) => {
         setCanNotify(permission === "granted");
       });
+    }
+
+    if ("serviceWorker" in navigator) {
+      // ServiceWorkerの登録
+      navigator.serviceWorker
+        .register("/sw.ts")
+        .then((registration) => {
+          setRegistration(registration);
+          // handlePlayClick(registration);
+        })
+        .catch(() => {
+          console.error("ServiceWorker registration failed");
+        });
+      // ServiceWorkerからメッセージを受信
+      // 音はクライアント側でのみ再生可能
+      channel.onmessage = (event) => {
+        // console.log("Received", event.data);
+        if (event.data === "play-sound") {
+          audioRef.current?.play();
+        }
+      };
+
+      // アプリのアンロード時にService Workerの時計を停止
+      onbeforeunload = () => {
+        navigator.serviceWorker.controller?.postMessage("stop");
+      };
     }
   }, []);
 
@@ -84,7 +105,6 @@ function App() {
       )}
       <h1 className="clock">{clock.time}</h1>
 
-      {/* <button onClick={playCuckoo}>音を鳴らす</button> */}
       <audio ref={audioRef} src={cuckooMp3}></audio>
       {intervalId == 0 && (
         <button
