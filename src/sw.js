@@ -1,7 +1,7 @@
 let intervalId = 0;
 let currentHour = 0;
 const channel = new BroadcastChannel("sound-connection");
-const self = globalThis as unknown as ServiceWorkerGlobalScope;
+// const self = globalThis as unknown as ServiceWorkerGlobalScope;
 
 // 通知をセット
 const setNotification = async () => {

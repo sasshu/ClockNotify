@@ -67,10 +67,10 @@ function App() {
     if ("serviceWorker" in navigator) {
       // ServiceWorkerの登録
       navigator.serviceWorker
-        // .register("/sw.ts")
+        // .register("/sw.js")
         .register(
           import.meta.env.MODE === "production"
-            ? "/sw.ts"
+            ? "/sw.js"
             : "/dev-sw.js?dev-sw",
           {
             type: import.meta.env.MODE === "production" ? "classic" : "module",

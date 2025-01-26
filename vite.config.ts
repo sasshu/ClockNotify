@@ -13,7 +13,7 @@ export default defineConfig({
         disabled: true,
       },
       srcDir: "src",
-      filename: "sw.ts",
+      filename: "sw.js",
       injectRegister: false,
       // PWA は使用しないので、manifest は不要
       manifest: false,
