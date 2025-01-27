@@ -57,7 +57,6 @@ function App() {
 
   useEffect(() => {
     setClock(getCurrentClock());
-    // console.log("env", import.meta.env.MODE);
 
     if (!canNotify) {
       Notification.requestPermission().then((permission) => {
@@ -88,6 +87,8 @@ function App() {
         // console.log("Received", event.data);
         if (event.data === "play-sound") {
           audioRef.current?.play();
+        } else if (event.data === "check-connection") {
+          console.log("still awake", `${clock.hour}:${clock.minute}`);
         }
       };
 

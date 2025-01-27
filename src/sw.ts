@@ -28,11 +28,14 @@ self.addEventListener("message", (event) => {
     self.setTimeout(() => {
       intervalId = self.setInterval(async () => {
         const current = new Date();
-        // Draft: 1時間間隔以外での通知も対応できるよう、1秒単位のインターバルを登録
+        // Draft: 1時間間隔以外での通知も対応できるよう、1分単位のインターバルを登録
         if (current.getMinutes() === 0 && current.getSeconds() === 0) {
-          // console.log(current.getMinutes(), current.getSeconds());
           currentHour = current.getHours();
           await setNotification();
+        }
+        // 5分おきにクライアントとの接続確認
+        if (current.getMinutes() % 5 === 0 && current.getSeconds() === 0) {
+          channel.postMessage("check-connection");
         }
       }, 1000);
     }, 1000 - new Date().getUTCMilliseconds());
