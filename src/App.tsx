@@ -57,6 +57,7 @@ function App() {
 
   useEffect(() => {
     setClock(getCurrentClock());
+    // console.log("env", import.meta.env.MODE);
 
     if (!canNotify) {
       Notification.requestPermission().then((permission) => {
@@ -67,10 +68,9 @@ function App() {
     if ("serviceWorker" in navigator) {
       // ServiceWorkerの登録
       navigator.serviceWorker
-        // .register("/sw.js")
         .register(
           import.meta.env.MODE === "production"
-            ? "/sw.js"
+            ? "../sw.js"
             : "/dev-sw.js?dev-sw",
           {
             type: import.meta.env.MODE === "production" ? "classic" : "module",

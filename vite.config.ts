@@ -13,7 +13,7 @@ export default defineConfig({
         disabled: true,
       },
       srcDir: "src",
-      filename: "sw.js",
+      filename: "sw.ts",
       injectRegister: false,
       // PWA は使用しないので、manifest は不要
       manifest: false,
@@ -26,5 +26,5 @@ export default defineConfig({
       },
     }),
   ],
-  base: process.env.GITHUB_PAGES ? "/ClockNotify" : "./",
+  base: process.env.GITHUB_PAGES ? "/ClockNotify/" : "./",
 });
