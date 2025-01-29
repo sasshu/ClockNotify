@@ -26,7 +26,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [registration, setRegistration] = useState({});
   const audioRef = useRef(new Audio());
-  const channel = new BroadcastChannel("sound-connection");
+  let channel = new BroadcastChannel("sound-connection");
 
   // 時計を進める
   const handlePlayClick = () => {
@@ -48,6 +48,7 @@ function App() {
     window.setTimeout(() => {
       const newId = window.setInterval(() => {
         setClock(getCurrentClock());
+        channel = new BroadcastChannel("sound-connection");
       }, 1000);
       setIntervalId(newId);
     }, 1000 - new Date().getUTCMilliseconds());
@@ -88,7 +89,7 @@ function App() {
         if (event.data === "play-sound") {
           audioRef.current?.play();
         } else if (event.data === "check-connection") {
-          console.log("still awake", `${clock.hour}:${clock.minute}`);
+          console.log("channel connected");
         }
       };
 

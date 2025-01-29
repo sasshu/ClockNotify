@@ -33,8 +33,7 @@ self.addEventListener("message", (event) => {
           currentHour = current.getHours();
           await setNotification();
         }
-        // 5分おきにクライアントとの接続確認
-        if (current.getMinutes() % 5 === 0 && current.getSeconds() === 0) {
+        if (current.getSeconds() === 0) {
           channel.postMessage("check-connection");
         }
       }, 1000);
