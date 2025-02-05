@@ -18,21 +18,21 @@ const getCurrentClock = () => {
 };
 
 function App() {
+  const isNotificationExists = "Notification" in self;
   const [clock, setClock] = useState(getCurrentClock());
   const [canNotify, setCanNotify] = useState(
-    Notification?.permission === "granted"
+    isNotificationExists && Notification.permission === "granted"
   );
   const [intervalId, setIntervalId] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const audioRef = useRef(new Audio());
-  const isNotificationExists = "Notification" in self;
 
   // 時計を進める
   const handlePlayClick = () => {
     initializeClock();
     navigator.serviceWorker.controller?.postMessage("play");
-    if (!canNotify) {
-      Notification?.requestPermission().then((permission) => {
+    if (!canNotify && isNotificationExists) {
+      Notification.requestPermission().then((permission) => {
         setCanNotify(permission === "granted");
       });
     }
