@@ -25,11 +25,17 @@ function App() {
   const [intervalId, setIntervalId] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const audioRef = useRef(new Audio());
+  const isNotificationExists = "Notification" in self;
 
   // 時計を進める
   const handlePlayClick = () => {
     initializeClock();
     navigator.serviceWorker.controller?.postMessage("play");
+    if (!canNotify) {
+      Notification?.requestPermission().then((permission) => {
+        setCanNotify(permission === "granted");
+      });
+    }
   };
 
   // 時計を止める
@@ -56,12 +62,6 @@ function App() {
   useEffect(() => {
     setClock(getCurrentClock());
 
-    if (!canNotify) {
-      Notification?.requestPermission().then((permission) => {
-        setCanNotify(permission === "granted");
-      });
-    }
-
     if ("serviceWorker" in navigator) {
       // ServiceWorkerの登録
       navigator.serviceWorker
@@ -79,7 +79,6 @@ function App() {
       // ServiceWorkerからメッセージを受信
       // 音はクライアント側でのみ再生可能
       navigator.serviceWorker.onmessage = (event) => {
-        // console.log("Received", event.data);
         if (event.data === "play-sound") {
           audioRef.current?.play();
         } else if (event.data === "check-connection") {
@@ -91,15 +90,19 @@ function App() {
 
   return (
     <>
-      <p>1時間ごとにデスクトップ通知を送ります。</p>
-      {intervalId == 0 && <p>時計の停止中、通知は届きません。</p>}
-      {intervalId !== 0 && (
-        <p>次の通知は{clock.hour === 23 ? 0 : clock.hour + 1}時です。</p>
-      )}
-      {!canNotify && (
-        <p>
-          ※通知を受け取るには、サイトの設定から通知をオンにする必要があります。
-        </p>
+      {isNotificationExists && (
+        <>
+          <p>1時間ごとにデスクトップ通知を送ります。</p>
+          {intervalId == 0 && <p>時計の停止中、通知は届きません。</p>}
+          {intervalId !== 0 && (
+            <p>次の通知は{clock.hour === 23 ? 0 : clock.hour + 1}時です。</p>
+          )}
+          {!canNotify && (
+            <p>
+              ※通知を受け取るには、サイトの設定から通知をオンにする必要があります。
+            </p>
+          )}
+        </>
       )}
       <h1 className="clock">{clock.time}</h1>
 
