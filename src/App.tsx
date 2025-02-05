@@ -24,21 +24,19 @@ function App() {
   );
   const [intervalId, setIntervalId] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-  const [registration, setRegistration] = useState({});
   const audioRef = useRef(new Audio());
-  let channel = new BroadcastChannel("sound-connection");
 
   // 時計を進める
   const handlePlayClick = () => {
     initializeClock();
-    (registration as ServiceWorkerRegistration).active?.postMessage("play");
+    navigator.serviceWorker.controller?.postMessage("play");
   };
 
   // 時計を止める
   const handlePauseClick = () => {
     clearInterval(intervalId);
     setIntervalId(0);
-    (registration as ServiceWorkerRegistration).active?.postMessage("pause");
+    navigator.serviceWorker.controller?.postMessage("pause");
   };
 
   // 時計を初期化
@@ -48,7 +46,6 @@ function App() {
     window.setTimeout(() => {
       const newId = window.setInterval(() => {
         setClock(getCurrentClock());
-        channel = new BroadcastChannel("sound-connection");
       }, 1000);
       setIntervalId(newId);
     }, 1000 - new Date().getUTCMilliseconds());
@@ -76,28 +73,19 @@ function App() {
             type: import.meta.env.MODE === "production" ? "classic" : "module",
           }
         )
-        .then((registration) => {
-          setRegistration(registration);
-        })
         .catch(() => {
           console.error("ServiceWorker registration failed");
         });
       // ServiceWorkerからメッセージを受信
       // 音はクライアント側でのみ再生可能
-      channel.onmessage = (event) => {
+      navigator.serviceWorker.onmessage = (event) => {
         // console.log("Received", event.data);
         if (event.data === "play-sound") {
           audioRef.current?.play();
         } else if (event.data === "check-connection") {
-          console.log("channel connected");
+          console.log("ServiceWorker connected");
         }
       };
-
-      // // アプリのアンロード時にService Workerの時計を停止
-      // onbeforeunload = async () => {
-      //   navigator.serviceWorker.controller?.postMessage("stop");
-      //   // await (registration as ServiceWorkerRegistration).unregister();
-      // };
     }
   }, []);
 

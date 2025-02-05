@@ -1,6 +1,6 @@
 let intervalId = 0;
 let currentHour = 0;
-const channel = new BroadcastChannel("sound-connection");
+let client: null | Client;
 const self = globalThis as unknown as ServiceWorkerGlobalScope;
 
 // 通知をセット
@@ -16,14 +16,15 @@ const postNotification = async () => {
     icon: "/logo.png",
     tag: "hourlyNotification",
   });
-  channel.postMessage("play-sound");
+  client?.postMessage("play-sound");
 };
 self.addEventListener("install", () => {
   console.log("ServiceWorker installed");
   self.skipWaiting();
 });
 // クライアントからメッセージを受信
-self.addEventListener("message", (event) => {
+self.onmessage = (event) => {
+  client = event.source as Client;
   if (event.data === "play") {
     self.setTimeout(() => {
       intervalId = self.setInterval(async () => {
@@ -34,7 +35,7 @@ self.addEventListener("message", (event) => {
           await setNotification();
         }
         if (current.getSeconds() === 0) {
-          channel.postMessage("check-connection");
+          client?.postMessage("check-connection");
         }
       }, 1000);
     }, 1000 - new Date().getUTCMilliseconds());
@@ -42,4 +43,4 @@ self.addEventListener("message", (event) => {
     self.clearInterval(intervalId);
     intervalId = 0;
   }
-});
+};
