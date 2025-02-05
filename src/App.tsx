@@ -20,7 +20,7 @@ const getCurrentClock = () => {
 function App() {
   const [clock, setClock] = useState(getCurrentClock());
   const [canNotify, setCanNotify] = useState(
-    Notification.permission === "granted"
+    Notification?.permission === "granted"
   );
   const [intervalId, setIntervalId] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -57,7 +57,7 @@ function App() {
     setClock(getCurrentClock());
 
     if (!canNotify) {
-      Notification.requestPermission().then((permission) => {
+      Notification?.requestPermission().then((permission) => {
         setCanNotify(permission === "granted");
       });
     }

@@ -49,3 +49,9 @@
   clip-path: polygon(0 0, 0 100%, 100% 100%, 100% 0);
   background-color: #b1b8c2;
 }
+
+@media screen and (max-width: 480px) {
+  .clock {
+    font-size: 75px;
+  }
+}
