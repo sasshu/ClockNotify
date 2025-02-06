@@ -24,6 +24,7 @@ function App() {
     isNotificationExists && Notification.permission === "granted"
   );
   const [intervalId, setIntervalId] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const audioRef = useRef(new Audio());
 
@@ -36,13 +37,14 @@ function App() {
         setCanNotify(permission === "granted");
       });
     }
+    setIsPlaying(true);
   };
 
   // 時計を止める
   const handlePauseClick = () => {
     clearInterval(intervalId);
-    setIntervalId(0);
     navigator.serviceWorker.controller?.postMessage("pause");
+    setIsPlaying(false);
   };
 
   // 時計を初期化
@@ -93,8 +95,8 @@ function App() {
       {isNotificationExists && (
         <>
           <p>1時間ごとにデスクトップ通知を送ります。</p>
-          {intervalId == 0 && <p>時計の停止中、通知は届きません。</p>}
-          {intervalId !== 0 && (
+          {!isPlaying && <p>時計の停止中、通知は届きません。</p>}
+          {isPlaying && (
             <p>次の通知は{clock.hour === 23 ? 0 : clock.hour + 1}時です。</p>
           )}
           {!canNotify && (
@@ -107,7 +109,7 @@ function App() {
       <h1 className="clock">{clock.time}</h1>
 
       <audio ref={audioRef} src={cuckooMp3}></audio>
-      {intervalId == 0 && (
+      {!isPlaying && (
         <button
           className="audio-button"
           onClick={handlePlayClick}
@@ -117,7 +119,7 @@ function App() {
           <div className="play-icon"></div>
         </button>
       )}
-      {intervalId !== 0 && (
+      {isPlaying && (
         <button
           className="audio-button"
           onClick={handlePauseClick}

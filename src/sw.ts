@@ -18,10 +18,10 @@ const postNotification = async () => {
   });
   client?.postMessage("play-sound");
 };
-self.addEventListener("install", () => {
+self.oninstall = () => {
   console.log("ServiceWorker installed");
   self.skipWaiting();
-});
+};
 // クライアントからメッセージを受信
 self.onmessage = (event) => {
   client = event.source as Client;
