@@ -53,7 +53,14 @@ function App() {
 
     window.setTimeout(() => {
       const newId = window.setInterval(() => {
-        setClock(getCurrentClock());
+        const newClock = getCurrentClock();
+        setClock(newClock);
+        if (newClock.second === 50) {
+          console.log(
+            `state at ${newClock.hour}:${newClock.minute} is`,
+            navigator.serviceWorker.controller?.state
+          );
+        }
       }, 1000);
       setIntervalId(newId);
     }, 1000 - new Date().getUTCMilliseconds());
@@ -78,17 +85,18 @@ function App() {
         .catch(() => {
           console.error("ServiceWorker registration failed");
         });
-      // ServiceWorkerからメッセージを受信
-      // 音はクライアント側でのみ再生可能
-      navigator.serviceWorker.onmessage = (event) => {
-        if (event.data === "play-sound") {
-          audioRef.current?.play();
-        } else if (event.data === "check-connection") {
-          console.log("ServiceWorker connected");
-        }
-      };
     }
   }, []);
+
+  // ServiceWorkerからメッセージを受信
+  // 音はクライアント側でのみ再生可能
+  navigator.serviceWorker.onmessage = (event) => {
+    if (event.data === "play-sound") {
+      audioRef.current?.play();
+    } else if (event.data === "check-connection") {
+      console.log("ServiceWorker connected");
+    }
+  };
 
   return (
     <>

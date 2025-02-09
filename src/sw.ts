@@ -1,5 +1,6 @@
 let intervalId = 0;
 let currentHour = 0;
+let isPlaying = false;
 let client: null | Client;
 const self = globalThis as unknown as ServiceWorkerGlobalScope;
 
@@ -25,7 +26,7 @@ self.oninstall = () => {
 // クライアントからメッセージを受信
 self.onmessage = (event) => {
   client = event.source as Client;
-  if (event.data === "play") {
+  if (event.data === "play" && !isPlaying) {
     self.setTimeout(() => {
       intervalId = self.setInterval(async () => {
         const current = new Date();
@@ -39,8 +40,10 @@ self.onmessage = (event) => {
         }
       }, 1000);
     }, 1000 - new Date().getUTCMilliseconds());
+    isPlaying = true;
   } else if (event.data === "pause") {
     self.clearInterval(intervalId);
     intervalId = 0;
+    isPlaying = false;
   }
 };
